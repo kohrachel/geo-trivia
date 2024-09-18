@@ -17,7 +17,7 @@ function CountriesTrivia() {
       })
       .then((data) => {
         console.log("data: ", data);
-        setCapital(data.capital || "Error fetching capital"); // Set the capital from the backend response
+        setCapital(data || "Error fetching capital"); // Set the capital from the backend response
         // setCountry(data.name || 'Error fetching country'); // Set the country from the backend response
       })
       .catch((error) => {
@@ -32,7 +32,7 @@ function CountriesTrivia() {
   }, []); // Empty dependency array to only run once
 
   // Function to handle form submission
-  const handleSubmit = (e) => {
+  const validate = (e) => {
     e.preventDefault(); // Prevent the page from refreshing
     console.log("in verification func");
 
@@ -47,6 +47,7 @@ function CountriesTrivia() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Truth value of guess: ", data);
+        // return true or false to the user
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -63,7 +64,7 @@ function CountriesTrivia() {
       <p>Capital: {capital}</p>
 
       {/* Form to input the string literal */}
-      <form onSubmit={handleSubmit}>
+      <form onSubmit={validate}>
         <input
           type="text"
           value={input}

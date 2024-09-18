@@ -26,7 +26,7 @@ async function getCapital() {
 
     const name = randomCountry.name.common;
     countryDetails = { name, capital };
-    return countryDetails;
+    return capital;
   } catch (error) {
     console.error("Error fetching country data:", error);
     return "Error generating capital.";
