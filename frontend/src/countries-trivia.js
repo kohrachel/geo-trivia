@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 function CountriesTrivia() {
   const [input, setInput] = useState("");
   const [capital, setCapital] = useState("");
+  const [result, setResult] = useState("");
   // const [country, setCountry] = useState('');
 
   // Function to fetch the capital from the backend
@@ -47,6 +48,8 @@ function CountriesTrivia() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Truth value of guess: ", data);
+        setResult(data); // Set the capital from the backend response
+
         // return true or false to the user
       })
       .catch((error) => {
@@ -57,12 +60,9 @@ function CountriesTrivia() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Guess the Country!</h1>
-
       <p>Can you guess the country based on its capital city?</p>
-
       {/* Display the capital */}
       <p>Capital: {capital}</p>
-
       {/* Form to input the string literal */}
       <form onSubmit={validate}>
         <input
@@ -78,7 +78,9 @@ function CountriesTrivia() {
         <button type="submit">Guess</button>
       </form>
       <br></br>
-
+      {/* <p>{JSON.stringify(result)}</p> */}
+      <p>{result ? "ok sporcle whiz" : "lol no"}</p>
+      {/* if (result) {<p>You geographical genius</p>} else {<p>lol no</p>} */}
       {/* Button to fetch a new capital */}
       <button onClick={fetchCapital}>Get a New Capital</button>
     </div>
