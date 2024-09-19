@@ -48,13 +48,37 @@ function CountriesTrivia() {
       .then((response) => response.json())
       .then((data) => {
         console.log("Truth value of guess: ", data);
-        setResult(data); // Set the capital from the backend response
-
+        setResult(printResult(data)); // Set the capital from the backend response
+        // printResult(data);
         // return true or false to the user
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+  };
+
+  const printResult = (result) => {
+    // <p>{result ? "ok sporcle whiz" : "lol no"}</p>;
+    const resCorrectAns = [
+      "ok geography whiz",
+      "did you study for this instead of your test?",
+      "ding ding ding",
+      "okay you googled that didn't you",
+      "einstein would be jealous of you",
+    ];
+
+    const resWrongAns = [
+      "no lol",
+      "your american is showing",
+      "...wrong",
+      "really?",
+      "it's okay, we all have bad days",
+    ];
+    const responseOk =
+      resCorrectAns[Math.floor(Math.random() * resCorrectAns.length)];
+    const responseNotOk =
+      resWrongAns[Math.floor(Math.random() * resWrongAns.length)];
+    return result ? responseOk : responseNotOk;
   };
 
   return (
@@ -78,8 +102,11 @@ function CountriesTrivia() {
         <button type="submit">Guess</button>
       </form>
       <br></br>
+      <p>{result}</p>
+      <br></br>
+
       {/* <p>{JSON.stringify(result)}</p> */}
-      <p>{result ? "ok sporcle whiz" : "lol no"}</p>
+      {/* <p>{result ? "ok sporcle whiz" : "lol no"}</p> */}
       {/* if (result) {<p>You geographical genius</p>} else {<p>lol no</p>} */}
       {/* Button to fetch a new capital */}
       <button onClick={fetchCapital}>Get a New Capital</button>

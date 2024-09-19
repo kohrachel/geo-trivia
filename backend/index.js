@@ -25,7 +25,8 @@ async function getCapital() {
       : "No capital found";
 
     const name = randomCountry.name.common;
-    countryDetails = { name, capital };
+    const altSpellings = randomCountry.altSpellings;
+    countryDetails = { name, altSpellings, capital };
     return capital;
   } catch (error) {
     console.error("Error fetching country data:", error);
@@ -46,10 +47,18 @@ app.get("/capital", async (req, res) => {
 // Default POST endpoint to validate user input
 app.post("/validate", async (req, res) => {
   //   console.log("req.body.input: ", req.body);
-  const input = req.body.input; // Receive the input from the frontend
+  const input = req.body.input.toLowerCase().trim(); // Receive the input from the frontend
 
+  console.log({ countryDetails });
   console.log("Name? : ", countryDetails.name);
-  if (input === countryDetails.name) {
+
+  let matchesOtherSpellings = false;
+  for (let i = 0; i < countryDetails.altSpellings.length; i++) {
+    if (input === countryDetails.altSpellings[i].toLowerCase())
+      matchesOtherSpellings = true;
+  }
+
+  if (input === countryDetails.name.toLowerCase() || matchesOtherSpellings) {
     res.json(true);
   } else {
     res.json(false);
