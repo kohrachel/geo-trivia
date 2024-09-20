@@ -13,7 +13,7 @@ async function getFacts(country) {
     messages: [
       {
         role: "user",
-        content: `Please generate three short, one-sentence-long bullet points giving general statistics about ${country}. Do not mention the name of the country in your bullet points.`,
+        content: `Generate 1 short, concise paragraph containing 3 general statistics about ${country}. Do not mention the name of the country, its denonym, its currency, or the region in which it is located.`,
       },
     ],
     model: "gpt-3.5-turbo",
@@ -31,6 +31,7 @@ const countriesApiUrl = "https://restcountries.com/v3.1/all";
 
 let countryDetails = {};
 let hints = {};
+let numHints = 0;
 
 async function getCountryDetails() {
   try {
@@ -49,14 +50,21 @@ async function getCountryDetails() {
     const name = selectedCountry.name.common;
     const officialName = selectedCountry.name.official;
     const altSpellings = selectedCountry.altSpellings;
-    const languages = selectedCountry.languages;
+    const language =
+      selectedCountry.languages[
+        Math.floor(Math.random() * selectedCountry.languages.length)
+      ];
     const region = selectedCountry.region;
     const flag = selectedCountry.flags;
 
     const facts = await getFacts(name);
 
     countryDetails = { name, officialName, altSpellings, capital, flag, facts };
-    hints = { languages, region };
+    hints = [
+      `This country is somewhere in ${region}`,
+      `They speak the ${language} in this mysterious place`,
+      `You ran out of hints. Too bad!`,
+    ];
 
     return countryDetails;
   } catch (error) {
@@ -98,7 +106,8 @@ app.get("/capital", async (req, res) => {
 app.get("/hint", async (req, res) => {
   // const capital = await getCapital();
   console.log("hints: ", hints);
-  res.json(hints); // Respond with the hints in JSON format
+
+  numHints < 2 ? res.json(hints[numHints++]) : res.json(hints[2]); // Respond with the hints in JSON format
 });
 
 // Default POST endpoint to validate user input

@@ -6,7 +6,7 @@ function CountriesTrivia() {
   const [capital, setCapital] = useState("");
   const [result, setResult] = useState("");
   const [hints, setHints] = useState("");
-  let numHints = 0;
+  let [numHints, setNumHints] = useState(0);
   let flagURL = "";
   // const [country, setCountry] = useState('');
 
@@ -66,23 +66,24 @@ function CountriesTrivia() {
       .then((data) => {
         console.log("hints: ", data);
 
-        // get all the hints
-        const languages = Object.values(data.languages);
-        let hintList = {};
+        // // get all the hints
+        // const languages = Object.values(data.languages);
+        // let hintList = {};
 
-        hintList[0] = data.region;
+        // hintList[0] = data.region;
 
-        for (let index = 0; index < languages.length; index++) {
-          console.log("current language: ", languages[index]);
-          hintList[index + 1] = languages[index];
-        }
+        // for (let index = 0; index < languages.length; index++) {
+        //   console.log("current language: ", languages[index]);
+        //   hintList[index + 1] = languages[index];
+        // }
 
-        console.log("region: ", hintList[0]);
-        console.log("all hints: ", hintList);
+        // console.log("region: ", hintList[0]);
+        // console.log("all hints: ", hintList);
 
         // setHints(hintList || "Error setting hints");
 
-        setHints(printHints(hintList));
+        setHints(data);
+
         // setHints(languages || "Error setting hints");
 
         // setHints(data || "Error setting hints"); // Set the capital from the backend response
@@ -130,11 +131,17 @@ function CountriesTrivia() {
     if (numHints >= allHints.length) {
       return "You ran out of hints. Too bad you suck at this.";
     }
+    console.log("numHints before: ", numHints);
+    let newNum = numHints + 1;
+
     if (numHints === 0) {
-      numHints++;
-      return "This place is in the " + hints[0] + " region";
+      setNumHints(newNum);
+      console.log("numHints during: ", numHints);
+      return "This place is in the region of " + allHints[0] + "";
     }
-    return "They speak " + hints[numHints++] + " in this mysterious place";
+
+    setNumHints(newNum);
+    return "They speak " + allHints[numHints - 1] + " in this mysterious place";
   };
 
   const printResult = (result) => {
@@ -164,7 +171,7 @@ function CountriesTrivia() {
   return (
     <div style={{ padding: "20px" }}>
       <h1>Guess the Country!</h1>
-      <p>Can you guess the country based on its capital city and flag?</p>
+      <h3>Can you guess the country based on some clues?</h3>
       {/* Display the capital */}
       {/* {console.log("country details: ", countryDetails)} */}
       {/* {console.log("capital (frontend): ", countryDetails.capital)} */}
@@ -173,6 +180,7 @@ function CountriesTrivia() {
       <p>{countryDetails.facts}</p>
       <p>Flag: </p>
       {countryDetails.flag && <img src={countryDetails.flag.png}></img>}
+      <br></br>
       <br></br>
       {/* Form to input the string literal */}
       <form onSubmit={validate}>
@@ -195,11 +203,9 @@ function CountriesTrivia() {
       {/* Button to get a hint */}
       <button onClick={fetchHint}>Stuck? Get a hint!</button>
       <br></br>
-
       {hints}
-
       <br></br>
-
+      <br></br>
       {/* Button to fetch a new capital */}
       <button onClick={fetchCountryDetails}>
         I rage quit, give me a new capital
