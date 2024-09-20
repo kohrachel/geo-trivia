@@ -1,6 +1,28 @@
-const express = require("express");
-const axios = require("axios");
-const cors = require("cors");
+import "dotenv/config";
+import OpenAI from "openai";
+import express from "express";
+import axios from "axios";
+import cors from "cors";
+
+const client = new OpenAI({
+  apiKey: process.env["OPENAI_API_KEY"], // This is the default and can be omitted
+});
+
+async function getFacts(country) {
+  const chatCompletion = await client.chat.completions.create({
+    messages: [
+      {
+        role: "user",
+        content: `Please generate three short, one-sentence-long bullet points giving general statistics about ${country}. Do not mention the name of the country in your bullet points.`,
+      },
+    ],
+    model: "gpt-3.5-turbo",
+  });
+  return chatCompletion.choices[0].message.content;
+
+  // console.log(chatCompletion.choices[0].message.content);
+}
+
 const app = express();
 const port = 3000;
 
@@ -31,7 +53,9 @@ async function getCountryDetails() {
     const region = selectedCountry.region;
     const flag = selectedCountry.flags;
 
-    countryDetails = { name, officialName, altSpellings, capital, flag };
+    const facts = await getFacts(name);
+
+    countryDetails = { name, officialName, altSpellings, capital, flag, facts };
     hints = { languages, region };
 
     return countryDetails;

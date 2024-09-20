@@ -169,6 +169,8 @@ function CountriesTrivia() {
       {/* {console.log("country details: ", countryDetails)} */}
       {/* {console.log("capital (frontend): ", countryDetails.capital)} */}
       <p>Capital: {countryDetails.capital}</p>
+      <p>Fun facts:</p>
+      <p>{countryDetails.facts}</p>
       <p>Flag: </p>
       {countryDetails.flag && <img src={countryDetails.flag.png}></img>}
       <br></br>
