@@ -166,11 +166,11 @@ function CountriesTrivia() {
       <h1>Guess the Country!</h1>
       <p>Can you guess the country based on its capital city and flag?</p>
       {/* Display the capital */}
-      {console.log("country details: ", countryDetails)}
+      {/* {console.log("country details: ", countryDetails)} */}
       {/* {console.log("capital (frontend): ", countryDetails.capital)} */}
       <p>Capital: {countryDetails.capital}</p>
       <p>Flag: </p>
-      <img src={countryDetails.flag.png}></img>
+      {countryDetails.flag && <img src={countryDetails.flag.png}></img>}
       <br></br>
       {/* Form to input the string literal */}
       <form onSubmit={validate}>
@@ -191,10 +191,11 @@ function CountriesTrivia() {
       <br></br>
       {/* <p>{JSON.stringify(result)}</p> */}
       {/* Button to get a hint */}
-      <button onClick={fetchHint}>
-        Stuck? Get a hint!
-        {/* {printHints(hints)} */}
-      </button>
+      <button onClick={fetchHint}>Stuck? Get a hint!</button>
+      <br></br>
+
+      {hints}
+
       <br></br>
 
       {/* Button to fetch a new capital */}
