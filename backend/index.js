@@ -19,15 +19,14 @@ async function getFacts(country) {
     model: "gpt-3.5-turbo",
   });
   return chatCompletion.choices[0].message.content;
-
-  // console.log(chatCompletion.choices[0].message.content);
 }
 
 const app = express();
 const port = 3000;
 
 // REST Countries API endpoint
-const countriesApiUrl = "https://restcountries.com/v3.1/all";
+const countriesApiUrl =
+  "https://restcountries.com/v3.1/independent?status=true";
 
 let countryDetails = {};
 let hints = [];
@@ -56,7 +55,7 @@ async function getCountryDetails() {
 
     const facts = await getFacts(name);
 
-    countryDetails = { capital, flag, facts };
+    countryDetails = { name, officialName, altSpellings, capital, flag, facts };
 
     hints[0] = region;
 
@@ -86,9 +85,8 @@ app.use(express.json());
 
 // Default GET endpoint to return a capital
 app.get("/country-details", async (req, res) => {
-  // const capital = await getCapital();
+  numHints = 0;
   const countryDetails = await getCountryDetails();
-  // console.log("country details: ", countryDetails);
 
   res.json(countryDetails); // Respond with the country's details in JSON format
 });
@@ -102,10 +100,6 @@ app.get("/capital", async (req, res) => {
 
 // Default GET endpoint to return a capital
 app.get("/hint", async (req, res) => {
-  // const capital = await getCapital();
-  console.log("hints: ", hints);
-  console.log("numHints before: ", numHints);
-
   if (numHints >= hints.length) {
     res.json("You ran out of hints. Too bad you suck at this.");
   } else if (numHints === 0) {
@@ -113,21 +107,13 @@ app.get("/hint", async (req, res) => {
     res.json(`This place is in the region of ${hints[0]}`);
   } else {
     numHints++;
-    console.log("numHints after: ", numHints);
-
     res.json(`They speak ${hints[numHints - 1]} in this mysterious place`);
   }
-
-  // numHints < 2 ? res.json(hints[numHints++]) : res.json(hints[2]); // Respond with the hints in JSON format
 });
 
 // Default POST endpoint to validate user input
 app.post("/validate", async (req, res) => {
-  //   console.log("req.body.input: ", req.body);
   const input = req.body.input.toLowerCase().trim(); // Receive the input from the frontend
-
-  console.log({ countryDetails });
-  console.log("Name : ", countryDetails.name);
 
   let matchesSpellings = false;
   if (
