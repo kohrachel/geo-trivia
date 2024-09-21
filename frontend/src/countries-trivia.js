@@ -8,9 +8,8 @@ function CountriesTrivia() {
   const [hints, setHints] = useState("");
   let [numHints, setNumHints] = useState(0);
   let flagURL = "";
-  // const [country, setCountry] = useState('');
 
-  // Function to fetch the capital from the backend
+  // Function to fetch country details from the backend
   const fetchCountryDetails = () => {
     // Send a GET request to the backend
     fetch("http://localhost:3000/country-details")
@@ -34,23 +33,6 @@ function CountriesTrivia() {
   // Function to fetch the capital from the backend
   const fetchCapital = () => {
     return countryDetails.capital;
-    // // Send a GET request to the backend
-    // fetch("http://localhost:3000/capital")
-    //   .then((res) => {
-    //     if (!res.ok) {
-    //       throw new Error("Network response was not ok");
-    //     }
-    //     return res.json();
-    //   })
-    //   .then((data) => {
-    //     console.log("data: ", data);
-    //     setCapital(data || "Error fetching capital"); // Set the capital from the backend response
-    //     // setCountry(data.name || 'Error fetching country'); // Set the country from the backend response
-    //   })
-    //   .catch((error) => {
-    //     console.error("Error:", error);
-    //     setCapital("Error fetching country details");
-    //   });
   };
 
   // Function to fetch the capital from the backend
@@ -64,11 +46,11 @@ function CountriesTrivia() {
         return res.json();
       })
       .then((data) => {
-        console.log("hints: ", data);
+        console.log("hint: ", data);
 
         // // get all the hints
-        // const languages = Object.values(data.languages);
-        // let hintList = {};
+        // const languages = Object.values(data.language);
+        // let hintList = [];
 
         // hintList[0] = data.region;
 
@@ -82,7 +64,7 @@ function CountriesTrivia() {
 
         // setHints(hintList || "Error setting hints");
 
-        setHints(data);
+        setHints(printHints(data));
 
         // setHints(languages || "Error setting hints");
 
@@ -127,21 +109,28 @@ function CountriesTrivia() {
       });
   };
 
-  const printHints = (allHints) => {
-    if (numHints >= allHints.length) {
+  const printHints = (hint) => {
+    return hint;
+    console.log(hint);
+    console.log("allHints[0]: ", hint[0]);
+    console.log("allHints[1]: ", hint[1]);
+
+    console.log("numHints before: ", numHints);
+
+    if (numHints >= hint.length) {
       return "You ran out of hints. Too bad you suck at this.";
     }
-    console.log("numHints before: ", numHints);
     let newNum = numHints + 1;
 
     if (numHints === 0) {
       setNumHints(newNum);
-      console.log("numHints during: ", numHints);
-      return "This place is in the region of " + allHints[0] + "";
+      return `This place is in the region of ${hint[0]}`;
     }
 
     setNumHints(newNum);
-    return "They speak " + allHints[numHints - 1] + " in this mysterious place";
+    console.log("numHints after: ", numHints);
+
+    return `They speak ${hint[numHints - 1]} in this mysterious place`;
   };
 
   const printResult = (result) => {

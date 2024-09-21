@@ -13,7 +13,7 @@ async function getFacts(country) {
     messages: [
       {
         role: "user",
-        content: `Generate 1 short, concise paragraph containing 3 general statistics about ${country}. Do not mention the name of the country, its denonym, its currency, or the region in which it is located.`,
+        content: `Return 1 paragraph of not more than 30 words containing 3 statistics about ${country}. You are not allowed to explicitly mention ${country}.`,
       },
     ],
     model: "gpt-3.5-turbo",
@@ -30,7 +30,7 @@ const port = 3000;
 const countriesApiUrl = "https://restcountries.com/v3.1/all";
 
 let countryDetails = {};
-let hints = {};
+let hints = [];
 let numHints = 0;
 
 async function getCountryDetails() {
@@ -50,21 +50,19 @@ async function getCountryDetails() {
     const name = selectedCountry.name.common;
     const officialName = selectedCountry.name.official;
     const altSpellings = selectedCountry.altSpellings;
-    const language =
-      selectedCountry.languages[
-        Math.floor(Math.random() * selectedCountry.languages.length)
-      ];
+    const language = Object.values(selectedCountry.languages);
     const region = selectedCountry.region;
     const flag = selectedCountry.flags;
 
     const facts = await getFacts(name);
 
-    countryDetails = { name, officialName, altSpellings, capital, flag, facts };
-    hints = [
-      `This country is somewhere in ${region}`,
-      `They speak the ${language} in this mysterious place`,
-      `You ran out of hints. Too bad!`,
-    ];
+    countryDetails = { capital, flag, facts };
+
+    hints[0] = region;
+
+    for (let index = 0; index < language.length; index++) {
+      hints[index + 1] = language[index];
+    }
 
     return countryDetails;
   } catch (error) {
@@ -106,8 +104,21 @@ app.get("/capital", async (req, res) => {
 app.get("/hint", async (req, res) => {
   // const capital = await getCapital();
   console.log("hints: ", hints);
+  console.log("numHints before: ", numHints);
 
-  numHints < 2 ? res.json(hints[numHints++]) : res.json(hints[2]); // Respond with the hints in JSON format
+  if (numHints >= hints.length) {
+    res.json("You ran out of hints. Too bad you suck at this.");
+  } else if (numHints === 0) {
+    numHints++;
+    res.json(`This place is in the region of ${hints[0]}`);
+  } else {
+    numHints++;
+    console.log("numHints after: ", numHints);
+
+    res.json(`They speak ${hints[numHints - 1]} in this mysterious place`);
+  }
+
+  // numHints < 2 ? res.json(hints[numHints++]) : res.json(hints[2]); // Respond with the hints in JSON format
 });
 
 // Default POST endpoint to validate user input
