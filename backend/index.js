@@ -19,6 +19,8 @@ async function getFacts(country) {
     model: "gpt-3.5-turbo",
   });
   return chatCompletion.choices[0].message.content;
+
+  // console.log(chatCompletion.choices[0].message.content);
 }
 
 const app = express();
@@ -93,8 +95,6 @@ app.get("/country-details", async (req, res) => {
 
 // Default GET endpoint to return a capital
 app.get("/capital", async (req, res) => {
-  // const capital = await getCapital();
-  // const countryDetails = await getCountryDetails();
   res.json(countryDetails.capital); // Respond with the capital in JSON format
 });
 
@@ -107,6 +107,7 @@ app.get("/hint", async (req, res) => {
     res.json(`This place is in the region of ${hints[0]}`);
   } else {
     numHints++;
+
     res.json(`They speak ${hints[numHints - 1]} in this mysterious place`);
   }
 });
